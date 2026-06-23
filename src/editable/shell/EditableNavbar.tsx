@@ -2,56 +2,99 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, Search, X } from 'lucide-react'
+import { ArrowRight, Globe, Menu, Search, X } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
 
 export function EditableNavbar() {
   const [open, setOpen] = useState(false)
   const { session, logout } = useEditableLocalAuthSession()
+  const links = [
+    { label: 'Resources', href: '/search' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ]
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--slot4-surface-bg)] text-black shadow-[0_1px_0_rgba(0,0,0,.18)]">
-      <div className="mx-auto grid min-h-[88px] max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-10">
-        <div className="flex items-center gap-4">
-          <button type="button" onClick={() => setOpen((value) => !value)} className="inline-flex h-10 w-10 items-center justify-center border border-black/25 lg:hidden" aria-label="Toggle navigation">
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#23245f] text-white shadow-[0_20px_60px_rgba(10,12,38,0.22)]">
+      <div className="mx-auto flex min-h-[86px] max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-10">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/5 lg:hidden"
+          aria-label="Toggle navigation"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
 
-        <Link href="/" className="editorial-brand max-w-[54vw] truncate text-center text-3xl font-black text-[var(--slot4-accent)] sm:text-5xl">
-          {SITE_CONFIG.name}
+        <Link href="/" className="min-w-0 shrink-0">
+          <span className="playful-wordmark block truncate text-[1.65rem] font-black uppercase tracking-[0.32em] text-white sm:text-[2.35rem]">
+            {SITE_CONFIG.name}
+          </span>
         </Link>
 
-        <div className="flex items-center justify-end gap-4">
-          {session ? (
-            <>
-              <Link href="/create" className="hidden text-xs font-black uppercase tracking-[.12em] sm:block">Create</Link>
-              <button type="button" onClick={logout} className="hidden text-xs font-black uppercase tracking-[.12em] sm:block">Logout</button>
-            </>
-          ) : <Link href="/login" className="hidden text-xs font-black uppercase tracking-[.12em] sm:block">Log in</Link>}
-          <Link href={session ? '/create' : '/signup'} className="bg-[var(--slot4-accent)] px-4 py-3 text-[10px] font-black uppercase tracking-[.14em] text-white sm:px-6">
-            {session ? 'Publish' : 'Subscribe'}
-          </Link>
-        </div>
-      </div>
+        <nav className="ml-4 hidden items-center gap-8 lg:flex">
+          {links.map((item) => (
+            <Link key={item.href} href={item.href} className="text-sm font-bold text-white transition hover:text-[#ffd65a]">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
-      <div className="bg-black text-white">
-        <div className="mx-auto flex min-h-[54px] max-w-[1440px] items-center px-4 sm:px-6 lg:px-10">
-          <Link href="/" className="mr-6 hidden items-center gap-2 text-xs font-black uppercase tracking-[.16em] lg:flex"><Menu className="h-4 w-4" /> Menu</Link>
-          <form action="/search" className="ml-auto flex min-w-0 flex-1 items-center border-l border-white/20 lg:max-w-[270px] lg:flex-none">
-            <Search className="ml-4 h-4 w-4 text-white/65" />
-            <input name="q" type="search" placeholder="Search the archive" className="min-w-0 flex-1 bg-transparent px-3 py-4 text-xs font-bold outline-none placeholder:text-white/45" />
-          </form>
+        <div className="ml-auto hidden items-center gap-4 lg:flex">
+          <Link href={session ? '/create' : '/login'} className="text-sm font-bold text-white transition hover:text-[#ffd65a]">
+            {session ? 'Create' : 'Sign In'}
+          </Link>
+          <Link href={session ? '/create' : '/signup'} className="inline-flex items-center gap-2 rounded-xl bg-[#3d63ff] px-6 py-4 text-sm font-black text-white shadow-[0_18px_36px_rgba(61,99,255,0.25)] transition hover:-translate-y-0.5 hover:bg-[#4b70ff]">
+            Get Started <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link href="/search" className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-white/8 text-white transition hover:bg-white/14" aria-label="Search archive">
+            <Search className="h-5 w-5" />
+          </Link>
+          <div className="hidden h-12 w-12 items-center justify-center rounded-xl bg-white/8 xl:inline-flex">
+            <Globe className="h-5 w-5" />
+          </div>
         </div>
       </div>
 
       {open ? (
-        <div className="border-t border-black/15 bg-[var(--slot4-surface-bg)] px-4 py-4 lg:hidden">
-          <div className="grid gap-px bg-black/15">
-            {[{ label: 'Home', href: '/' }, { label: 'Archive', href: '/search' }, { label: 'Contact', href: '/contact' }, ...(session ? [{ label: 'Create', href: '/create' }] : [{ label: 'Login', href: '/login' }, { label: 'Sign up', href: '/signup' }])].map((item) => (
-              <Link key={`${item.label}-${item.href}`} href={item.href} onClick={() => setOpen(false)} className="bg-white px-4 py-3 text-sm font-black uppercase tracking-[.1em]">{item.label}</Link>
+        <div className="border-t border-white/10 bg-[#1d1e52] px-4 py-4 lg:hidden">
+          <div className="grid gap-3">
+            <form action="/search" className="flex overflow-hidden rounded-2xl border border-white/10 bg-white/8">
+              <input
+                name="q"
+                type="search"
+                placeholder="Search stories, categories, and updates"
+                className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white outline-none placeholder:text-white/45"
+              />
+              <button className="border-l border-white/10 px-4 text-white">
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
+            {links.map((item) => (
+              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white">
+                {item.label}
+              </Link>
             ))}
+            {session ? (
+              <>
+                <Link href="/create" onClick={() => setOpen(false)} className="rounded-2xl border border-white/10 bg-[#3d63ff] px-4 py-3 text-sm font-black text-white">
+                  Create Post
+                </Link>
+                <button onClick={logout} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-bold text-white">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setOpen(false)} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white">
+                  Sign In
+                </Link>
+                <Link href="/signup" onClick={() => setOpen(false)} className="rounded-2xl border border-white/10 bg-[#3d63ff] px-4 py-3 text-sm font-black text-white">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       ) : null}
