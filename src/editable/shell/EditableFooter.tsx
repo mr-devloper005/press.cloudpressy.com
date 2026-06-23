@@ -11,34 +11,68 @@ export function EditableFooter() {
   const { session, logout } = useEditableLocalAuthSession()
 
   return (
-    <footer className="border-t-8 border-[var(--slot4-accent)] bg-black text-white">
-      <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_.7fr_.7fr]">
+    <footer className="overflow-hidden bg-[#23245f] text-white">
+      <div className="mx-auto max-w-[1440px] px-4 pt-10 sm:px-6 lg:px-10">
+        <div className="grid gap-6 border-b border-white/12 pb-10 lg:grid-cols-[0.9fr_1.1fr_auto] lg:items-end">
           <div>
-            <Link href="/" className="editorial-brand text-5xl font-black text-[var(--slot4-accent)] sm:text-6xl">{SITE_CONFIG.name}</Link>
-            <p className="mt-6 max-w-xl text-sm leading-7 text-white/62">{globalContent.footer?.description || SITE_CONFIG.description}</p>
-            <form action="/signup" className="mt-8 flex max-w-xl border border-white/35">
-              <input name="email" type="email" placeholder="Email for newsroom updates" className="min-w-0 flex-1 bg-transparent px-4 py-4 text-sm outline-none placeholder:text-white/40" />
-              <button className="bg-[var(--slot4-accent)] px-5 text-xs font-black uppercase tracking-[.14em]">Subscribe</button>
-            </form>
+            <div className="flex flex-wrap gap-3">
+              {['Leader', 'Momentum Leader', 'Regional Leader'].map((badge) => (
+                <span key={badge} className="rounded-full border border-white/14 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/85">
+                  {badge}
+                </span>
+              ))}
+            </div>
+            <Link href="/" className="playful-wordmark mt-8 block text-[2.2rem] font-black uppercase tracking-[0.28em] sm:text-[3rem]">
+              {SITE_CONFIG.name}
+            </Link>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-white/70">{SITE_CONFIG.name}</p>
           </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Explore</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/search" className="group inline-flex items-center justify-between text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Archive<ArrowRight className="h-4 w-4" /></Link>
+
+          <div className="grid gap-8 sm:grid-cols-2">
+            <div>
+              <h3 className="text-xs font-black uppercase tracking-[0.24em] text-[#ffd65a]">Explore</h3>
+              <div className="mt-4 grid gap-3">
+                <Link href="/search" className="text-sm font-bold text-white/82 transition hover:text-white">Search Archive</Link>
+                <Link href="/about" className="text-sm font-bold text-white/82 transition hover:text-white">About</Link>
+                <Link href="/contact" className="text-sm font-bold text-white/82 transition hover:text-white">Contact</Link>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xs font-black uppercase tracking-[0.24em] text-[#ffd65a]">Workspace</h3>
+              <div className="mt-4 grid gap-3">
+                {session ? (
+                  <>
+                    <Link href="/create" className="text-sm font-bold text-white/82 transition hover:text-white">Create Post</Link>
+                    <button onClick={logout} className="text-left text-sm font-bold text-white/82 transition hover:text-white">Logout</button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" className="text-sm font-bold text-white/82 transition hover:text-white">Sign In</Link>
+                    <Link href="/signup" className="text-sm font-bold text-white/82 transition hover:text-white">Get Started</Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-          <div>
-            <h3 className="border-b border-white/25 pb-3 text-[10px] font-black uppercase tracking-[.22em] text-white/55">Publication</h3>
-            <div className="mt-4 grid gap-3">
-              <Link href="/about" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">About</Link>
-              <Link href="/contact" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Contact</Link>
-              {session ? <><Link href="/create" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Publish</Link><button onClick={logout} className="text-left text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Logout</button></> : <><Link href="/login" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Log in</Link><Link href="/signup" className="text-sm font-black uppercase tracking-[.08em] hover:text-[var(--slot4-accent)]">Subscribe</Link></>}
-            </div>
+
+          <div className="flex flex-col gap-3 lg:items-end">
+            <Link href="/contact" className="text-sm font-bold text-white transition hover:text-[#ffd65a]">Request Pricing</Link>
+            <Link href={session ? '/create' : '/signup'} className="inline-flex items-center gap-2 rounded-xl bg-[#3d63ff] px-6 py-4 text-sm font-black text-white shadow-[0_18px_36px_rgba(61,99,255,0.24)] transition hover:-translate-y-0.5 hover:bg-[#4b70ff]">
+              Get Started <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
+
+        <div className="grid gap-6 py-8 text-sm text-white/70 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+          <div className="flex flex-wrap gap-5">
+            <span>Accessibility Statement</span>
+            <span>Privacy Policy</span>
+            <span>Contact &amp; Support</span>
+          </div>
+          <p className="text-center">Copyright © {year} {SITE_CONFIG.name}</p>
+          <p className="text-left lg:text-right">{globalContent.footer?.bottomNote || 'Built for media distribution and public discovery.'}</p>
+        </div>
       </div>
-      <div className="border-t border-white/20 px-4 py-5 text-center text-[10px] font-black uppercase tracking-[.18em] text-white/45">© {year} {SITE_CONFIG.name}. Independent media and public information.</div>
     </footer>
   )
 }
